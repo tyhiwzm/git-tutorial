@@ -134,3 +134,24 @@ The `commit` command performs a commit, and the `-m "_message_"` adds a message.
 
 The Staging Environment has been committed to our repo, with the message:  
 "First release of Hello World!"
+
+## Git Commit without Stage
+
+Sometimes, when you make small changes, using the staging environment seems like a waste of time. It is possible to commit changes directly, skipping the staging environment. The `-a` option will automatically stage every changed, already tracked file.
+
+Let's add a small update to `README.md`:
+And check the status of our repository. But this time, we will use the --short option to see the changes in a more compact way:
+
+### Example
+
+```shell
+$git status --short
+ M README.md
+```
+
+**Note:** Short status flags are:
+
+- ?? - Untracked files
+- A - Files added to stage
+- M - Modified files
+- D - Deleted files
