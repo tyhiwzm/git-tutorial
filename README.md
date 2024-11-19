@@ -155,3 +155,114 @@ $git status --short
 - A - Files added to stage
 - M - Modified files
 - D - Deleted files
+
+We see the file we expected is modified. So let's commit it directly:
+```shell
+$git commit -a -m "Updated README.md"
+[master 3fdfe28] Updated README.md
+ 1 file changed, 21 insertions(+)
+```
+
+**Warning:** Skipping the Staging Environment is not generally recommended.
+
+Skipping the stage step can sometimes make you include unwanted changes.
+## Git Commit Log
+
+To view the history of commits for a repository, you can use the `log` command:
+
+### Example
+
+```shell
+$git log
+commit 09f4acd3f8836b7f6fc44ad9e012f82faf861803 (HEAD -> master)
+Author: w3schools-test 
+Date:   Fri Mar 26 09:35:54 2021 +0100
+
+    Updated index.html with a new line
+
+commit 221ec6e10aeedbfd02b85264087cd9adc18e4b26
+Author: w3schools-test 
+Date:   Fri Mar 26 09:13:07 2021 +0100
+
+    First release of Hello World!
+```
+
+## Git Help
+
+If you are having trouble remembering commands or options for commands, you can use Git `help`.
+
+There are a couple of different ways you can use the `help` command in command line:
+
+- `git _command_ -help` -  See all the available options for the specific command
+- `git help --all` -  See all possible commands
+
+ Let's go over the different commands.
+
+## Working with Git Branches
+
+In Git, a `branch` is a new/separate version of the main repository.
+
+Let's say you have a large project, and you need to update the design on it.
+
+Branches allow you to work on different parts of a project without impacting the main branch.
+
+When the work is complete, a branch can be merged with the main project.
+
+You can even switch between branches and work on different projects without them interfering with each other.
+
+Branching in Git is very lightweight and fast!
+
+## New Git Branch
+Let add some new features to our `index.html` page.
+
+We are working in our local repository, and we do not want to disturb or possibly wreck the main project.
+
+So we create a new `branch`:
+```shell
+$git branch hello-world-images
+```
+Now we created a new `branch` called "`hello-world-images`"
+
+Let's confirm that we have created a new `branch`:
+```shell
+$git branch
+  hello-world-images
+* master
+```
+We can see the new branch with the name "hello-world-images", but the `*` beside `master` specifies that we are currently on that `branch`.
+
+`checkout` is the command used to check out a `branch`. Moving us **from** the current `branch`, **to** the one specified at the end of the command:
+```shell
+$git checkout hello-world-images
+Switched to branch 'hello-world-images'
+```
+Now we have moved our current workspace from the master branch, to the new `branch`.
+
+We have made changes to a file and added a new file in the working directory (same directory as the `main` `branch`).
+
+Now check the status of the current `branch`:
+```shell
+$git status
+On branch hello-world-images
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   README.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        new-branch-new-file.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+So let's go through what happens here:
+
+- There are changes to our `README.txt`, but the file is not staged for `commit`
+- `new-branch-new-file.txt` is not `tracked`
+
+So we need to add both files to the Staging Environment for this `branch`:
+```shell
+$git add --all
+```
