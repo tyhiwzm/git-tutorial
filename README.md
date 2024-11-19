@@ -108,3 +108,29 @@ Changes to be committed:
         new file:   file2.txt
 ```
 **Note:** The shorthand command for `git add --all` is `git add -A`
+
+## Git Commit
+
+Since we have finished our work, we are ready move from `stage` to `commit` for our repo.
+
+Adding commits keep track of our progress and changes as we work. Git considers each `commit` change point or "save point". It is a point in the project you can go back to if you find a bug, or want to make a change.
+
+When we `commit`, we should **always** include a **message**.
+
+By adding clear messages to each `commit`, it is easy for yourself (and others) to see what has changed and when.
+
+### Example
+
+```shell
+$git commit -m "First release of Hello World!"
+[master (root-commit) 221ec6e] First release of Hello World!
+ 3 files changed, 26 insertions(+)
+ create mode 100644 README.md
+ create mode 100644 bluestyle.css
+ create mode 100644 index.html
+```
+
+The `commit` command performs a commit, and the `-m "_message_"` adds a message.
+
+The Staging Environment has been committed to our repo, with the message:  
+"First release of Hello World!"
