@@ -266,3 +266,37 @@ So we need to add both files to the Staging Environment for this `branch`:
 ```shell
 $git add --all
 ```
+Using `--all` instead of individual filenames will **Stage** all changed (new, modified, and deleted) files.
+
+Check the `status` of the `branch`:
+```
+$git status
+On branch hello-world-images
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        modified:   README.md
+        new file:   new-branch-new-file.txt
+```
+We are happy with our changes. So we will commit them to the `branch`:
+```shell
+$git commit -m "Added image to Hello World"
+[hello-world-images 0312c55] Added image to Hello World
+2 files changed, 1 insertion(+)
+create mode 100644 img_hello_world.jpg
+```
+Now we have a new `branch`, that is different from the master `branch`.
+
+**Note:** Using the `-b` option on `checkout` will create a new branch, and move to it, if it does not exist
+
+## Switching Between Branches
+Now let's see just how quick and easy it is to work with different branches, and how well it works.
+
+We are currently on the branch `hello-world-images`. We added an image to this branch, so let's list the files in the current directory:
+```shell
+$ls
+README.md  file1.txt  file2.txt  new-branch-new-file.txt  test
+```
+We can see the new file `new-branch-new-file.txt`, and if we open the `README.txt`, we can see the code has been altered. All is as it should be.
+
+Now, let's see what happens when we change branch to master
