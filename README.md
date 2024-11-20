@@ -1,4 +1,2 @@
 # git-tutorial
-hello~
-hello！
-helllllllo!
+My name is tyh!
