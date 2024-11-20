@@ -30,6 +30,24 @@
   - [Pulling a Branch from GitHub](#pulling-a-branch-from-github)
   - [Push a Branch to GitHub](#push-a-branch-to-github)
   - [Working using the GitHub Flow](#working-using-the-github-flow)
+- [Git Contribute](#git-contribute)
+  - [Add to Someone Else's Repository](#add-to-someone-elses-repository)
+  - [Fork a Repository](#fork-a-repository)
+  - [Clone a Fork from GitHub](#clone-a-fork-from-github)
+  - [Configuring Remotes](#configuring-remotes)
+  - [Push Changes to Our GitHub Fork](#push-changes-to-our-github-fork)
+  - [Approving Pull Requests](#approving-pull-requests)
+- [Git Undo](#git-undo)
+  - [Git Revert](#git-revert)
+  - [Git Revert Find Commit in Log](#git-revert-find-commit-in-log)
+  - [Git Revert HEAD](#git-revert-head)
+  - [Git Reset](#git-reset)
+  - [Git Reset Find Commit in Log](#git-reset-find-commit-in-log)
+  - [Git Reset](#git-reset)
+  - [Git Undo Reset](#git-undo-reset)
+  - [Git commit --amend](#git-commit---amend)
+  - [Git Amend Commit Message](#git-amend-commit-message)
+  - [Git Amend Files](#git-amend-files)
 
 <!-- /TOC -->
 ## Git Tutorial
@@ -1038,3 +1056,249 @@ Confirm.
 
 And changes have been `merged` with `master`.
 
+## Git Undo
+### Git Revert
+`revert` is the command we use when we want to take a previous `commit` and add it as a new `commit`, keeping the `log` intact.
+
+Step 1: Find the previous `commit`.
+Step 2: Use it to make a new `commit`.
+Let's make a new `commit`, where we have "accidentally" deleted a file.
+
+```shell
+$git commit -m "Just a regular update, definitely no accidents here..."
+[master 16a6f19] Just a regular update, definitely no accidents here...
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 img_hello_git.jpg
+```
+Now we have a part in our `commit` history we want to go back to. Let's try and do that with `revert`.
+
+### Git Revert Find Commit in Log
+First thing, we need to find the point we want to return to. To do that, we need to go through the `log`.
+
+To avoid the very long log list, we are going to use the `--oneline` option, which gives just one line per commit showing:
+
+- The first seven characters of the `commit hash`
+- the `commit message`
+
+So let's find the point we want to `revert`:
+```shell
+$git log --oneline
+52418f7 (HEAD -> master) Just a regular update, definitely no accidents here...
+9a9add8 (origin/master) Added .gitignore
+81912ba Corrected spelling error
+3fdaa5b Merge pull request #1 from w3schools-test/update-readme
+836e5bf (origin/update-readme, update-readme) Updated readme for GitHub Branches
+daf4f7c (origin/html-skeleton, html-skeleton) Updated index.html with basic meta
+facaeae (gh-page/master) Merge branch 'master' of https://github.com/w3schools-test/hello-world
+e7de78f Updated index.html. Resized image
+5a04b6f Updated README.md with a line about focus
+d29d69f Updated README.md with a line about GitHub
+e0b6038 merged with hello-world-images after fixing conflicts
+1f1584e added new image
+dfa79db updated index.html with emergency fix
+0312c55 Added image to Hello World
+09f4acd Updated index.html with a new line
+221ec6e First release of Hello World!
+```
+We want to revert to the previous `commit`: `52418f7 (HEAD -> master) Just a regular update, definitely no accidents here...`, and we see that it is the latest `commit`.
+
+### Git Revert HEAD
+We revert the latest `commit` using git `revert HEAD` (`revert` the latest change,  and then `commit`), adding the option `--no-edit` to skip the commit message editor (getting the default `revert` message):
+```shell
+$git revert HEAD --no-edit
+[master e56ba1f] Revert "Just a regular update, definitely no accidents here..."
+ Date: Thu Apr 22 10:50:13 2021 +0200
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 img_hello_git.jpg
+```
+Now let's check the `log` again:
+```shell
+$git log --oneline
+e56ba1f (HEAD -> master) Revert "Just a regular update, definitely no accidents here..."
+52418f7 Just a regular update, definitely no accidents here...
+9a9add8 (origin/master) Added .gitignore
+81912ba Corrected spelling error
+3fdaa5b Merge pull request #1 from w3schools-test/update-readme
+836e5bf (origin/update-readme, update-readme) Updated readme for GitHub Branches
+daf4f7c (origin/html-skeleton, html-skeleton) Updated index.html with basic meta
+facaeae (gh-page/master) Merge branch 'master' of https://github.com/w3schools-test/hello-world
+e7de78f Updated index.html. Resized image
+5a04b6f Updated README.md with a line about focus
+d29d69f Updated README.md with a line about GitHub
+e0b6038 merged with hello-world-images after fixing conflicts
+1f1584e added new image
+dfa79db updated index.html with emergency fix
+0312c55 Added image to Hello World
+09f4acd Updated index.html with a new line
+221ec6e First release of Hello World!
+```
+**Note:** To revert to earlier commits, use `git revert HEAD~_x_` (_`x`_ being a number. 1 going back one more, 2 going back two more, etc.)
+
+On the next page, we'll go over `git reset`, which brings the repository back to an earlier state in the commits without making a new `commit`.
+
+### Git Reset
+`reset` is the command we use when we want to move the repository back to a previous `commit`, discarding any changes made after that `commit`.
+
+Step 1: Find the previous `commit`.
+Step 2: Move the repository back to that step.
+After the previous chapter, we have a part in our `commit` history we could go back to. Let's try and do that with `reset`.
+
+### Git Reset Find Commit in Log
+First thing, we need to find the point we want to return to. To do that, we need to go through the `log`.
+
+To avoid the very long `log` list, we are going to use the `--oneline` option, which gives just one line per `commit` showing:
+
+- The first seven characters of the `commit hash` - this is what we need to refer to in our reset command.
+- the `commit message`
+
+So let's find the point we want to `reset` to:
+```shell
+$git log --oneline
+e56ba1f (HEAD -> master) Revert "Just a regular update, definitely no accidents here..."
+52418f7 Just a regular update, definitely no accidents here...
+9a9add8 (origin/master) Added .gitignore
+81912ba Corrected spelling error
+3fdaa5b Merge pull request #1 from w3schools-test/update-readme
+836e5bf (origin/update-readme, update-readme) Updated readme for GitHub Branches
+daf4f7c (origin/html-skeleton, html-skeleton) Updated index.html with basic meta
+facaeae (gh-page/master) Merge branch 'master' of https://github.com/w3schools-test/hello-world
+e7de78f Updated index.html. Resized image
+5a04b6f Updated README.md with a line about focus
+d29d69f Updated README.md with a line about GitHub
+e0b6038 merged with hello-world-images after fixing conflicts
+1f1584e added new image
+dfa79db updated index.html with emergency fix
+0312c55 Added image to Hello World
+09f4acd Updated index.html with a new line
+221ec6e First release of Hello World!
+```
+We want to return to the `commit`: `9a9add8 (origin/master) Added .gitignore`, the last one before we started to mess with things.
+
+### Git Reset
+We `reset` our repository back to the specific commit using `git reset _commithash_` (`_commithash_` being the first 7 characters of the commit hash we found in the `log`):
+```shell
+$git reset 9a9add8
+```
+Now let's check the `log` again:
+```shell
+git log --oneline
+9a9add8 (HEAD -> master, origin/master) Added .gitignore
+81912ba Corrected spelling error
+3fdaa5b Merge pull request #1 from w3schools-test/update-readme
+836e5bf (origin/update-readme, update-readme) Updated readme for GitHub Branches
+daf4f7c (origin/html-skeleton, html-skeleton) Updated index.html with basic meta
+facaeae (gh-page/master) Merge branch 'master' of https://github.com/w3schools-test/hello-world
+e7de78f Updated index.html. Resized image
+5a04b6f Updated README.md with a line about focus
+d29d69f Updated README.md with a line about GitHub
+e0b6038 merged with hello-world-images after fixing conflicts
+1f1584e added new image
+dfa79db updated index.html with emergency fix
+0312c55 Added image to Hello World
+09f4acd Updated index.html with a new line
+221ec6e First release of Hello World!
+```
+
+**Warning:** Messing with the `commit` history of a repository can be dangerous. It is usually ok to make these kinds of changes to your own local repository. However, you should avoid making changes that rewrite history to `remote` repositories, especially if others are working with them.
+
+### Git Undo Reset
+Even though the commits are no longer showing up in the `log`, it is not removed from Git.
+
+If you know the commit hash you can `reset` to it:
+```shell
+$git reset e56ba1f
+```
+Now let's check the `log` again:
+```shell
+git log --oneline
+e56ba1f (HEAD -> master) Revert "Just a regular update, definitely no accidents here..."
+52418f7 Just a regular update, definitely no accidents here...
+9a9add8 (origin/master) Added .gitignore
+81912ba Corrected spelling error
+3fdaa5b Merge pull request #1 from w3schools-test/update-readme
+836e5bf (origin/update-readme, update-readme) Updated readme for GitHub Branches
+daf4f7c (origin/html-skeleton, html-skeleton) Updated index.html with basic meta
+facaeae (gh-page/master) Merge branch 'master' of https://github.com/w3schools-test/hello-world
+e7de78f Updated index.html. Resized image
+5a04b6f Updated README.md with a line about focus
+d29d69f Updated README.md with a line about GitHub
+e0b6038 merged with hello-world-images after fixing conflicts
+1f1584e added new image
+dfa79db updated index.html with emergency fix
+0312c55 Added image to Hello World
+09f4acd Updated index.html with a new line
+221ec6e First release of Hello World!
+```
+
+### Git commit --amend
+`commit --amend` is used to modify the most recent `commit`.
+
+It combines changes in the `staging environment` with the latest `commit`, and creates a new `commit`.
+
+This new `commit` replaces the latest `commit` entirely.
+
+### Git Amend Commit Message
+One of the simplest things you can do with `--amend` is to change a `commit` message.
+
+Let's update the `README.md` and `commit`:
+
+```shell
+$git commit -m "Adding plines to reddme"
+[master 07c5bc5] Adding plines to reddme
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+```
+
+Now let's check the `log`:
+```shell
+git log --oneline
+07c5bc5 (HEAD -> master) Adding plines to reddme
+9a9add8 (origin/master) Added .gitignore
+81912ba Corrected spelling error
+3fdaa5b Merge pull request #1 from w3schools-test/update-readme
+836e5bf (origin/update-readme, update-readme) Updated readme for GitHub Branches
+daf4f7c (origin/html-skeleton, html-skeleton) Updated index.html with basic meta
+facaeae (gh-page/master) Merge branch 'master' of https://github.com/w3schools-test/hello-world
+e7de78f Updated index.html. Resized image
+5a04b6f Updated README.md with a line about focus
+d29d69f Updated README.md with a line about GitHub
+e0b6038 merged with hello-world-images after fixing conflicts
+1f1584e added new image
+dfa79db updated index.html with emergency fix
+0312c55 Added image to Hello World
+09f4acd Updated index.html with a new line
+221ec6e First release of Hello World!
+```
+
+Oh no! the `commit` message is full of spelling errors. Embarrassing. Let's `amend` that:
+```shell
+$git commit --amend -m "Added lines to README.md"
+[master eaa69ce] Added lines to README.md
+ Date: Thu Apr 22 12:18:52 2021 +0200
+ 1 file changed, 3 insertions(+), 1 deletion(-))
+```
+And re-check the `log`:
+```shell
+$git log --oneline
+eaa69ce (HEAD -> master) Added lines to README.md
+9a9add8 (origin/master) Added .gitignore
+81912ba Corrected spelling error
+3fdaa5b Merge pull request #1 from w3schools-test/update-readme
+836e5bf (origin/update-readme, update-readme) Updated readme for GitHub Branches
+daf4f7c (origin/html-skeleton, html-skeleton) Updated index.html with basic meta
+facaeae (gh-page/master) Merge branch 'master' of https://github.com/w3schools-test/hello-world
+e7de78f Updated index.html. Resized image
+5a04b6f Updated README.md with a line about focus
+d29d69f Updated README.md with a line about GitHub
+e0b6038 merged with hello-world-images after fixing conflicts
+1f1584e added new image
+dfa79db updated index.html with emergency fix
+0312c55 Added image to Hello World
+09f4acd Updated index.html with a new line
+221ec6e First release of Hello World!
+```
+We see the previous `commit` is replaced with our amended one!
+
+**Warning:** Messing with the `commit` history of a repository can be dangerous. It is usually ok to make these kinds of changes to your own local repository. However, you should avoid making changes that rewrite history to `remote` repositories, especially if others are working with them.
+
+### Git Amend Files
+Adding files with `--amend` works the same way as above. Just add them to the `staging environment` before committing.
